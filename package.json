@@ -1,0 +1,35 @@
+{
+  "name": "mariastream",
+  "description": "Simplified stream interface for mariaDB",
+  "version": "0.1.0",
+  "author": "Andreas Madsen <amwebdk@gmail.com>",
+  "main": "lib/mariastream.js",
+  "scripts": {
+    "test": "tap test/simple/*"
+  },
+  "repository" : {
+    "type": "git",
+    "url": "git://github.com/AndreasMadsen/mariastream.git"
+  },
+  "keywords": [
+    "mariaDB",
+    "MySQL",
+    "SQL",
+    "stream",
+    "database"
+  ],
+  "dependencies": {
+    "mariasql": "0.1.x"
+  },
+  "devDependencies": {
+    "tap": "0.4.x",
+    "endpoint": "0.4.x",
+    "startpoint": "0.3.x",
+    "util-extend": "*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "0.11 || 0.10",
+    "npm": "1"
+  }
+ }
