@@ -11,13 +11,13 @@ npm install mariastream
 ## TODO
 
 * Support multiply querys in one statement
-* Support connectt using a mariasql instance
+* Support connect using a mariasql instance
 * Test abort methods
 * Test `usingArray: false` in connection constructor
 * Relay all methods and events between mariastream and mariasql
 * Write documentation
 * Write example
-* Write stream module for type conversion
+* Write external stream module for type conversion
 
 ## Documentation
 
