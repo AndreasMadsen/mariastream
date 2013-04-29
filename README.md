@@ -10,8 +10,6 @@ npm install mariastream
 
 ## TODO
 
-1. Test multiply querys in one statement
-2. Test info event
 3. Test abort methods
 4. Support connect using a mariasql instance
 5. Write example

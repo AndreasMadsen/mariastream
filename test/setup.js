@@ -41,6 +41,7 @@ exports.connectObject = function (settings) {
   return extend({
     host: '127.0.0.1',
     user: 'root',
-    password: ''
+    password: '',
+    multiStatements: true
   }, settings);
 };

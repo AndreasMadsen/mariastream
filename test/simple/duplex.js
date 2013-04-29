@@ -94,6 +94,39 @@ test('select values in table with a DublexStream using object', function (t) {
     }));
 });
 
+test('select values in table with a DublexStream using object', function (t) {
+  var data = DATA.map(function (letter) {
+    return {lower: letter, upper: letter.toUpperCase()};
+  });
+
+  var getId = client
+    .statement(
+      'UPDATE mariastream.test SET value=:upper WHERE value=:lower;' +
+      'SELECT value FROM mariastream.test WHERE value=:upper', {useArray: true}
+    )
+    .duplex();
+
+  var info = [];
+  var expectedInfo = [];
+
+  for (var i = 0; i < 50; i++) {
+    expectedInfo.push({ insertId: 0, affectedRows: i % 2 ? 0 : 1, numRows: i % 2 ? 1 : 0})
+  }
+
+  startpoint(data, {objectMode: true})
+    .pipe(getId)
+    .on('info', function (meta) { info.push(meta); })
+    .pipe(endpoint({objectMode: true}, function (err, rows) {
+      t.equal(err, null);
+      t.deepEqual(
+        Array.prototype.concat([], rows).join(''),
+        DATA.join('').toUpperCase()
+      );
+      t.deepEqual(info, expectedInfo);
+      t.end();
+    }));
+});
+
 test('close client', function (t) {
   client.close(function () {
     t.end();

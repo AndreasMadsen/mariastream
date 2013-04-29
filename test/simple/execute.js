@@ -51,7 +51,24 @@ test('simple execute error', function (t) {
     });
 });
 
-test('create temporary table', function (t) {
+test('multiply query on same statement', function (t) {
+  client.statement('SELECT 1 + 1 AS solution;SELECT 2 + 2 AS solution;')
+    .execute(function (err, rows, info) {
+      t.equal(err, null);
+      t.deepEqual(rows, [
+        {solution: '2'},
+        {solution: '4'}
+      ]);
+      t.deepEqual(info, {
+        insertId: 0,
+        affectedRows: 0,
+        numRows: 2
+      });
+      t.end();
+    });
+});
+
+test('reset temporary table', function (t) {
   setup.createTable(client, function (err) {
       t.equal(err, null);
       t.end();

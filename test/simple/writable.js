@@ -71,6 +71,49 @@ test('WriteStream rows to table using objects', function (t) {
     });
 });
 
+test('reset temporary table', function (t) {
+  setup.createTable(client, function (err) {
+      t.equal(err, null);
+      t.end();
+    });
+});
+
+test('multiply querys in same writable stream', function (t) {
+  var dump = client
+    .statement(
+      'INSERT INTO mariastream.test (value) VALUES(?);' +
+      'INSERT INTO mariastream.test (value) VALUES(?)'
+    )
+    .writable();
+
+  var data = DATA.map(function (letter) {
+    return [letter, letter.toUpperCase()];
+  });
+
+  var info = [];
+  var expectedInfo = [];
+
+  for (var i = 1; i <= 50; i++) {
+    expectedInfo.push({ insertId: i, affectedRows: 1, numRows: 0 });
+  }
+
+  startpoint(data, {objectMode: true})
+    .pipe(dump)
+    .on('info', function (meta) { info.push(meta); })
+    .once('close', function () {
+      client.statement('SELECT value FROM mariastream.test', {useArray: true})
+        .execute(function (err, rows) {
+          t.equal(err, null);
+          t.deepEqual(
+            Array.prototype.concat.apply([], rows).sort(),
+            Array.prototype.concat.apply([], data).sort()
+          );
+          t.deepEqual(info, expectedInfo);
+          t.end();
+        });
+    });
+});
+
 test('WriteStream emitting error', function (t) {
   var dump = client
     .statement('SHOW TABLES')

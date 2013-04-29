@@ -19,7 +19,7 @@ test('simple single row ReadStream using array', function (t) {
   var info = null;
   client.statement('SELECT 1 + 1 AS solution', {useArray: true})
     .readable()
-    .once('info', function (meta) { console.log(meta); info = meta; })
+    .once('info', function (meta) { info = meta; })
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [['2']]);
@@ -49,13 +49,36 @@ test('simple single row ReadStream using object', function (t) {
     }));
 });
 
-
 test('simple ReadStream emitting error', function (t) {
   client.statement('SHOW TABLES')
     .readable()
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err.message, 'No database selected');
       t.deepEqual(rows, []);
+      t.end();
+    }));
+});
+
+test('multiply querys in same reaable stream', function (t) {
+  var info = [];
+  client.statement('SELECT 1 + 1 AS solution;SELECT 2 + 2 AS solution;')
+    .readable()
+    .on('info', function (meta) { info.push(meta); })
+    .pipe(endpoint({objectMode: true}, function (err, rows) {
+      t.equal(err, null);
+      t.deepEqual(rows, [
+        {solution: '2'},
+        {solution: '4'}
+      ]);
+      t.deepEqual(info, [{
+        insertId: 0,
+        affectedRows: 0,
+        numRows: 1
+      }, {
+        insertId: 0,
+        affectedRows: 0,
+        numRows: 1
+      }]);
       t.end();
     }));
 });
