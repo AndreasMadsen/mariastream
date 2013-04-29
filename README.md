@@ -10,13 +10,14 @@ npm install mariastream
 
 ## TODO
 
-* Support multiply querys in one statement
-* Support connect using a mariasql instance
-* Test abort methods
-* Relay all methods and events between mariastream and mariasql
-* Write documentation
-* Write example
-* Write external stream module for type conversion
+1. Test multiply querys in one statement
+2. Test info event
+3. Test abort methods
+4. Support connect using a mariasql instance
+5. Write example
+6. Relay all methods and events between mariastream and mariasql
+7. Write documentation
+8. Write external stream module for type conversion
 
 ## Documentation
 
@@ -56,7 +57,7 @@ var mariaClient = require('mariastream');
 
 ### Class: Stream
 
-#### Stream.abort()
+#### Stream.destroy()
 
 #### WriteStream.write(params)
 #### DuplexStream.write(params)

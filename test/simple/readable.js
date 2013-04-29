@@ -19,7 +19,7 @@ test('simple single row ReadStream using array', function (t) {
   var info = null;
   client.statement('SELECT 1 + 1 AS solution', {useArray: true})
     .readable()
-    .once('info', function (meta) { info = meta; })
+    .once('info', function (meta) { console.log(meta); info = meta; })
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [['2']]);
