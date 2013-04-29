@@ -40,7 +40,7 @@ test('select values in table with a DublexStream using array', function (t) {
     return [letter];
   });
 
-  var getId = client.statement('SELECT value FROM mariastream.test WHERE value=?')
+  var getId = client.statement('SELECT value FROM mariastream.test WHERE value=?', {useArray: true})
     .duplex();
 
   startpoint(data, {objectMode: true})
@@ -64,7 +64,7 @@ test('reset temporary table', function (t) {
     t.equal(err, null);
 
     var query = client
-      .statement('INSERT INTO mariastream.test (value) VALUES(:value)', {useArray: false});
+      .statement('INSERT INTO mariastream.test (value) VALUES(:value)');
 
     async.forEach(data, function (value, done) {
       query.execute(value, done);

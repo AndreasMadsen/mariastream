@@ -17,7 +17,7 @@ test('connect and create test database', function (t) {
 
 test('simple single row ReadStream using array', function (t) {
   var info = null;
-  client.statement('SELECT 1 + 1 AS solution')
+  client.statement('SELECT 1 + 1 AS solution', {useArray: true})
     .readable()
     .once('info', function (meta) { info = meta; })
     .pipe(endpoint({objectMode: true}, function (err, rows) {
@@ -34,7 +34,7 @@ test('simple single row ReadStream using array', function (t) {
 
 test('simple single row ReadStream using object', function (t) {
   var info = null;
-  client.statement('SELECT 1 + 1 AS solution', {useArray: false})
+  client.statement('SELECT 1 + 1 AS solution')
     .readable()
     .once('info', function (meta) { info = meta; })
     .pipe(endpoint({objectMode: true}, function (err, rows) {
@@ -83,11 +83,11 @@ test('ReadStream on multiply rows', function (t) {
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [
-        ['1', 'a'],
-        ['2', 'b'],
-        ['3', 'c'],
-        ['4', 'd'],
-        ['5', 'e']
+        {id: '1', value: 'a'},
+        {id: '2', value: 'b'},
+        {id: '3', value: 'c'},
+        {id: '4', value: 'd'},
+        {id: '5', value: 'e'}
       ]);
       t.deepEqual(info, {
         insertId: 5,
@@ -105,7 +105,7 @@ test('ReadStream with parameters as array', function (t) {
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [
-        ['1', 'a']
+        {id: '1', value: 'a'}
       ]);
       t.end();
     }));
@@ -118,7 +118,7 @@ test('ReadStream with parameters as object', function (t) {
     .pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [
-        ['1', 'a']
+        {id: '1', value: 'a'}
       ]);
       t.end();
     }));

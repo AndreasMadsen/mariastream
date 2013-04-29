@@ -14,7 +14,7 @@ test('connect and create test database', function (t) {
 });
 
 test('simple execute with no parameters using array', function (t) {
-  client.statement('SELECT 1 + 1 AS solution')
+  client.statement('SELECT 1 + 1 AS solution', { useArray: true })
     .execute(function (err, rows, info) {
       t.equal(err, null);
       t.deepEqual(rows, [[ '2' ]]);
@@ -28,7 +28,7 @@ test('simple execute with no parameters using array', function (t) {
 });
 
 test('simple execute with no parameters using object', function (t) {
-  client.statement('SELECT 1 + 1 AS solution', { useArray: false })
+  client.statement('SELECT 1 + 1 AS solution')
     .execute(function (err, rows, info) {
       t.equal(err, null);
       t.deepEqual(rows, [{solution: '2'}]);
@@ -42,7 +42,7 @@ test('simple execute with no parameters using object', function (t) {
 });
 
 test('simple execute error', function (t) {
-  client.statement('SHOW TABLES', { useArray: false })
+  client.statement('SHOW TABLES')
     .execute(function (err, rows, info) {
       t.equal(err.message, 'No database selected');
       t.deepEqual(rows, []);
@@ -72,7 +72,7 @@ test('execute with array parameters', function (t) {
       client.statement('SELECT * FROM mariastream.test WHERE id = ?')
         .execute([info.insertId], function (err, rows, info) {
           t.equal(err, null);
-          t.deepEqual(rows, [[ '1', 'test-array' ]]);
+          t.deepEqual(rows, [{id: '1', value: 'test-array'}]);
           t.deepEqual(info, {
             insertId: 1,
             affectedRows: 0,
@@ -97,7 +97,7 @@ test('execute with object parameters', function (t) {
       client.statement('SELECT * FROM mariastream.test WHERE id = :id')
         .execute({id: info.insertId}, function (err, rows, info) {
           t.equal(err, null);
-          t.deepEqual(rows, [[ '2', 'test-object' ]]);
+          t.deepEqual(rows, [{id: '2', value: 'test-object'}]);
           t.deepEqual(info, {
             insertId: 2,
             affectedRows: 0,
@@ -126,8 +126,8 @@ test('multiply execute on same statement', function (t) {
       .execute(['test-multiply'], function (err, rows) {
         t.equal(err, null);
         t.deepEqual(rows, [
-          ['test-multiply'],
-          ['test-multiply']
+          {value: 'test-multiply'},
+          {value: 'test-multiply'}
         ]);
         t.end();
       });

@@ -14,17 +14,17 @@ test('constructor validate options', function (t) {
 });
 
 test('constructor overwrite default options', function (t) {
-  var client1 = mariastream({ useArray: false });
-  t.equal(client1._options.useArray, false);
+  var client1 = mariastream({ useArray: true });
+  t.equal(client1._options.useArray, true);
   t.end();
 });
 
 test('constructor default options', function (t) {
   var client2 = mariastream({});
-  t.equal(client2._options.useArray, true);
+  t.equal(client2._options.useArray, false);
 
   var client3 = mariastream();
-  t.equal(client3._options.useArray, true);
+  t.equal(client3._options.useArray, false);
 
   t.end();
 });

@@ -34,7 +34,7 @@ test('WriteStream rows to table using array', function (t) {
   startpoint(data, {objectMode: true})
     .pipe(dump)
     .once('close', function () {
-      client.statement('SELECT value FROM mariastream.test')
+      client.statement('SELECT value FROM mariastream.test', {useArray: true})
         .execute(function (err, rows) {
           t.equal(err, null);
           t.deepEqual(rows, data);
@@ -62,7 +62,7 @@ test('WriteStream rows to table using objects', function (t) {
   startpoint(data, {objectMode: true})
     .pipe(dump)
     .once('close', function () {
-      client.statement('SELECT value FROM mariastream.test', {useArray: false})
+      client.statement('SELECT value FROM mariastream.test')
         .execute(function (err, rows) {
           t.equal(err, null);
           t.deepEqual(rows, data);
