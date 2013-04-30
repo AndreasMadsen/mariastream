@@ -151,6 +151,16 @@ test('multiply execute on same statement', function (t) {
   }
 });
 
+test('abort execute method', function (t) {
+  var abortable = client.statement('SHOW TABELS IN mariastream')
+    .execute(function (err, rows, info) {
+      console.log(err, rows, info);
+      t.end();
+    });
+
+  abortable.abort();
+});
+
 test('close client', function (t) {
   client.close(function () {
     t.end();

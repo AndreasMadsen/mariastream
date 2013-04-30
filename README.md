@@ -10,12 +10,12 @@ npm install mariastream
 
 ## TODO
 
-3. Test abort methods
-4. Support connect using a mariasql instance
-5. Write example
-6. Relay all methods and events between mariastream and mariasql
-7. Write documentation
-8. Write external stream module for type conversion
+* Complete tests for abort once mariasql has been fixed
+* Complete tests for connected property once mariasql has been fixed
+
+1. Write example
+2. Write documentation
+3. Write external stream module for type conversion
 
 ## Documentation
 
