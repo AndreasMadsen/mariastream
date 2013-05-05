@@ -16,14 +16,14 @@ test('connect and create test database', function (t) {
 });
 
 test('simple single row ReadStream using array', function (t) {
-  var info = null;
-  client.statement('SELECT 1 + 1 AS solution', {useArray: true})
-    .readable()
-    .once('info', function (meta) { info = meta; })
-    .pipe(endpoint({objectMode: true}, function (err, rows) {
+  var reader = client.statement('SELECT 1 + 1 AS solution', {useArray: true})
+    .readable();
+
+  reader.pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [['2']]);
-      t.deepEqual(info, {
+      t.deepEqual(reader.info, {
+        queries: 1,
         insertId: 0,
         affectedRows: 0,
         numRows: 1
@@ -34,13 +34,14 @@ test('simple single row ReadStream using array', function (t) {
 
 test('simple single row ReadStream using object', function (t) {
   var info = null;
-  client.statement('SELECT 1 + 1 AS solution')
-    .readable()
-    .once('info', function (meta) { info = meta; })
-    .pipe(endpoint({objectMode: true}, function (err, rows) {
+  var reader = client.statement('SELECT 1 + 1 AS solution')
+    .readable();
+
+  reader.pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [{solution: '2'}]);
-      t.deepEqual(info, {
+      t.deepEqual(reader.info, {
+        queries: 1,
         insertId: 0,
         affectedRows: 0,
         numRows: 1
@@ -60,25 +61,21 @@ test('simple ReadStream emitting error', function (t) {
 });
 
 test('multiply querys in same reaable stream', function (t) {
-  var info = [];
-  client.statement('SELECT 1 + 1 AS solution;SELECT 2 + 2 AS solution;')
-    .readable()
-    .on('info', function (meta) { info.push(meta); })
-    .pipe(endpoint({objectMode: true}, function (err, rows) {
+  var reader = client.statement('SELECT 1 + 1 AS solution;SELECT 2 + 2 AS solution;')
+    .readable();
+
+  reader.pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [
         {solution: '2'},
         {solution: '4'}
       ]);
-      t.deepEqual(info, [{
+      t.deepEqual(reader.info, {
+        queries: 2,
         insertId: 0,
         affectedRows: 0,
-        numRows: 1
-      }, {
-        insertId: 0,
-        affectedRows: 0,
-        numRows: 1
-      }]);
+        numRows: 2
+      });
       t.end();
     }));
 });
@@ -99,11 +96,10 @@ test('setup temporary table', function (t) {
 
 test('ReadStream on multiply rows', function (t) {
 
-  var info = null;
-  client.statement('SELECT * FROM mariastream.test')
-    .readable()
-    .once('info', function (meta) { info = meta; })
-    .pipe(endpoint({objectMode: true}, function (err, rows) {
+  var reader = client.statement('SELECT * FROM mariastream.test')
+    .readable();
+
+  reader.pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(rows, [
         {id: '1', value: 'a'},
@@ -112,7 +108,8 @@ test('ReadStream on multiply rows', function (t) {
         {id: '4', value: 'd'},
         {id: '5', value: 'e'}
       ]);
-      t.deepEqual(info, {
+      t.deepEqual(reader.info, {
+        queries: 1,
         insertId: 5,
         affectedRows: 0,
         numRows: 5

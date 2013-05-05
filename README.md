@@ -187,14 +187,15 @@ query.execute(function (err, rows, info) {
 ```
 
 The `callback` takes 3 arguments, the first is an `Error` or `null`, the second
-and array of the rows, the thrid is an info object there contain the following
+and array of the rows, the thrid is an `info` object there contain the following
 properties:
 
 ```javascipt
 {
-  insertId: Number
-  affectedRows: Number,
-  numRows: Number
+  queries: Number, // Number of successful queries
+  insertId: Number, // Last inserted id
+  affectedRows: Number, // Total affected rows
+  numRows: Number // Total selected rows
 }
 ```
 
@@ -270,6 +271,20 @@ can be read from others can be written to.
 They all have the classic (stream)[http://nodejs.org/api/stream.html] methods,
 but futhermore they also share these methods:
 
+#### Stream.info
+
+Contains the same information as the `info` object in `statement.execute` but is
+updated continuely.
+
+```javascipt
+{
+  queries: Number, // Number of successful queries
+  insertId: Number, // Last inserted id
+  affectedRows: Number, // Total affected rows
+  numRows: Number // Total selected rows
+}
+```
+
 #### Stream.destroy()
 
 This will abort all active statements in progress related to the stream. In case
@@ -284,22 +299,6 @@ if the stream has been aborted this event will emit.
 #### Event: Stream.on('error')
 
 If an error happen while processing the query, this event will emit.
-
-#### Event: Stream.on('info')
-
-This event will emit once a single query has been processed. In the
-`statement.readable` it will only emit once, but in the `statement.writable`
-and `statement.writable` case it can emit any number of times.
-
-The event emits with an object set as first argument with the following properties:
-
-```javascipt
-{
-  insertId: Number
-  affectedRows: Number,
-  numRows: Number
-}
-```
 
 ## License
 

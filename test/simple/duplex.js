@@ -106,23 +106,21 @@ test('select values in table with a DublexStream using object', function (t) {
     )
     .duplex();
 
-  var info = [];
-  var expectedInfo = [];
+  var reader = startpoint(data, {objectMode: true})
+    .pipe(getId);
 
-  for (var i = 0; i < 50; i++) {
-    expectedInfo.push({ insertId: 0, affectedRows: i % 2 ? 0 : 1, numRows: i % 2 ? 1 : 0})
-  }
-
-  startpoint(data, {objectMode: true})
-    .pipe(getId)
-    .on('info', function (meta) { info.push(meta); })
-    .pipe(endpoint({objectMode: true}, function (err, rows) {
+  reader.pipe(endpoint({objectMode: true}, function (err, rows) {
       t.equal(err, null);
       t.deepEqual(
         Array.prototype.concat([], rows).join(''),
         DATA.join('').toUpperCase()
       );
-      t.deepEqual(info, expectedInfo);
+      t.deepEqual(reader.info, {
+        queries: 50,
+        insertId: 0,
+        affectedRows: 25,
+        numRows: 25
+      });
       t.end();
     }));
 });

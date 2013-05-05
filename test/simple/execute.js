@@ -19,6 +19,7 @@ test('simple execute with no parameters using array', function (t) {
       t.equal(err, null);
       t.deepEqual(rows, [[ '2' ]]);
       t.deepEqual(info, {
+        queries: 1,
         insertId: 0,
         affectedRows: 0,
         numRows: 1
@@ -33,6 +34,7 @@ test('simple execute with no parameters using object', function (t) {
       t.equal(err, null);
       t.deepEqual(rows, [{solution: '2'}]);
       t.deepEqual(info, {
+        queries: 1,
         insertId: 0,
         affectedRows: 0,
         numRows: 1
@@ -46,7 +48,12 @@ test('simple execute error', function (t) {
     .execute(function (err, rows, info) {
       t.equal(err.message, 'No database selected');
       t.deepEqual(rows, []);
-      t.equal(info, null);
+      t.deepEqual(info, {
+        queries: 0,
+        insertId: 0,
+        affectedRows: 0,
+        numRows: 0
+      });
       t.end();
     });
 });
@@ -60,6 +67,7 @@ test('multiply query on same statement', function (t) {
         {solution: '4'}
       ]);
       t.deepEqual(info, {
+        queries: 2,
         insertId: 0,
         affectedRows: 0,
         numRows: 2
@@ -81,6 +89,7 @@ test('execute with array parameters', function (t) {
       t.equal(err, null);
       t.deepEqual(rows, []);
       t.deepEqual(info, {
+        queries: 1,
         insertId: 1,
         affectedRows: 1,
         numRows: 0
@@ -91,6 +100,7 @@ test('execute with array parameters', function (t) {
           t.equal(err, null);
           t.deepEqual(rows, [{id: '1', value: 'test-array'}]);
           t.deepEqual(info, {
+            queries: 1,
             insertId: 1,
             affectedRows: 0,
             numRows: 1
@@ -106,6 +116,7 @@ test('execute with object parameters', function (t) {
       t.equal(err, null);
       t.deepEqual(rows, []);
       t.deepEqual(info, {
+        queries: 1,
         insertId: 2,
         affectedRows: 1,
         numRows: 0
@@ -116,6 +127,7 @@ test('execute with object parameters', function (t) {
           t.equal(err, null);
           t.deepEqual(rows, [{id: '2', value: 'test-object'}]);
           t.deepEqual(info, {
+            queries: 1,
             insertId: 2,
             affectedRows: 0,
             numRows: 1
@@ -149,16 +161,6 @@ test('multiply execute on same statement', function (t) {
         t.end();
       });
   }
-});
-
-test('abort execute method', function (t) {
-  var abortable = client.statement('SHOW TABELS IN mariastream')
-    .execute(function (err, rows, info) {
-      console.log(err, rows, info);
-      t.end();
-    });
-
-  abortable.abort();
 });
 
 test('close client', function (t) {

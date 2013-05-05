@@ -90,17 +90,10 @@ test('multiply querys in same writable stream', function (t) {
     return [letter, letter.toUpperCase()];
   });
 
-  var info = [];
-  var expectedInfo = [];
+  var reader = startpoint(data, {objectMode: true})
+    .pipe(dump);
 
-  for (var i = 1; i <= 50; i++) {
-    expectedInfo.push({ insertId: i, affectedRows: 1, numRows: 0 });
-  }
-
-  startpoint(data, {objectMode: true})
-    .pipe(dump)
-    .on('info', function (meta) { info.push(meta); })
-    .once('close', function () {
+  reader.once('close', function () {
       client.statement('SELECT value FROM mariastream.test', {useArray: true})
         .execute(function (err, rows) {
           t.equal(err, null);
@@ -108,7 +101,12 @@ test('multiply querys in same writable stream', function (t) {
             Array.prototype.concat.apply([], rows).sort(),
             Array.prototype.concat.apply([], data).sort()
           );
-          t.deepEqual(info, expectedInfo);
+          t.deepEqual(reader.info, {
+            queries: 50,
+            insertId: 50,
+            affectedRows: 50,
+            numRows: 0
+          });
           t.end();
         });
     });
