@@ -1,7 +1,7 @@
 {
   "name": "mariastream",
   "description": "Simplified stream interface for mariaDB",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Andreas Madsen <amwebdk@gmail.com>",
   "main": "lib/mariastream.js",
   "scripts": {
