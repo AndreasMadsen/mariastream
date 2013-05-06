@@ -54,6 +54,22 @@ test('select values in table with a DublexStream using array', function (t) {
     }));
 });
 
+test('regression: end called after writing queue is drained', function (t) {
+  var getId = client.statement('SELECT value FROM mariastream.test WHERE value=?', {useArray: true})
+    .duplex();
+
+  getId.write(['a']);
+  getId.once('readable', function () {
+    setTimeout(function () {
+      getId.end();
+    }, 50);
+  });
+
+  getId.once('close', function () {
+    t.deepEqual(getId.read(), ['a']);
+    t.end();
+  });
+});
 
 test('reset temporary table', function (t) {
   var data = DATA.map(function (letter) {
