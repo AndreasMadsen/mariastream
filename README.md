@@ -57,7 +57,6 @@ client
 
 * Complete tests for abort once mariasql has been fixed
 * Complete tests for connected property once mariasql has been fixed
-* Write external stream module for type conversion
 
 ## Documentation
 
